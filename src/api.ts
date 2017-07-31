@@ -9,7 +9,6 @@ export function getItems(done) {
 }
 
 export function getDaysItems(month: string, done) {
-    console.log(month)
     let daysItems = {
         '2017-08-15': [
             {
