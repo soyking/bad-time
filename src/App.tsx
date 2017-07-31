@@ -3,37 +3,58 @@ import Calendar from 'rc-calendar'
 import 'rc-calendar/assets/index.css'
 import { Box } from 'react-polymer-layout'
 import DateCell from './DateCell'
+import { getDaysItems, getItems } from './api'
+import * as moment from 'moment'
 
 const levelColor = {
   1: '#FFFF99',
   2: '#FF6633',
 }
 
-class App extends React.Component<{}, {}> {
+interface State {
+  items: Array<string>
+  levels: object
+  daysItems: object
+}
+
+class App extends React.Component<{}, State> {
   _dateRender(current, value) {
-    let color = levelColor[this.state['level'][current.format('YYYY-MM-DD')]] || ''
+    let items = this.state.levels[current.format('YYYY-MM-DD')]
+    let color = levelColor[items] ? levelColor[items] : ''
     let currentMonth = current.month() === value.month()
     return <DateCell date={current} color={color} currentMonth={currentMonth} />
   }
 
-  _getLevel() {
-    return {
-      '2017-08-04': 1,
-      '2017-08-03': 1,
-      '2017-08-02': 2,
-      '2017-08-01': 2,
-      '2017-07-31': 1,
-      '2017-07-30': 1,
-      '2017-07-29': 2,
-      '2017-07-28': 1,
-      '2017-07-27': 2,
-      '2017-07-26': 2,
-    }
+  _updateDaysItems(date) {
+    getDaysItems(date.format('YYYY-MM'), daysItems => {
+      let levels = {}
+      for (const key of Object.keys(daysItems)) {
+        let items = daysItems[key]
+        let level = 0
+        items.forEach(item => { if (item['state'] === 'damn') { level += 1 } })
+        levels[key] = level
+      }
+      console.log(levels)
+      this.setState({ 'daysItems': daysItems, 'levels': levels })
+    })
+  }
+
+  _onChange(date) {
+    this._updateDaysItems(date)
   }
 
   constructor(props: any) {
     super(props)
-    this.state = { 'level': this._getLevel() }
+    this.state = {
+      'items': [],
+      'levels': {},
+      'daysItems': {}
+    }
+  }
+
+  componentDidMount() {
+    getItems(items => { this.setState({ 'items': items }) })
+    this._updateDaysItems(moment(new Date()))
   }
 
 
@@ -43,7 +64,7 @@ class App extends React.Component<{}, {}> {
         <Calendar
           style={{ width: 500 }}
           onSelect={() => { console.log('select') }}
-          onChange={() => { console.log('change') }}
+          onChange={this._onChange.bind(this)}
           dateRender={this._dateRender.bind(this)}
           renderFooter={() => { return <div>footer</div> }}
           showToday={false}
