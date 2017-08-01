@@ -10,16 +10,10 @@ export function getItems(done) {
 
 export function getDaysItems(month: string, done) {
     let daysItems = {
-        '2017-08-15': [
-            {
-                'item': 'coke',
-                'state': 'damn'
-            },
-            {
-                'item': 'coffee',
-                'state': 'damn'
-            }
-        ]
+        '2017-08-15': {
+            'coke': 1,
+            'coffee': 1
+        }
     }
 
     done(daysItems)

@@ -5,19 +5,21 @@ import { Box } from 'react-polymer-layout'
 import DateCell from './DateCell'
 import { getDaysItems, getItems } from './api'
 import * as moment from 'moment'
+import DateState from './DateState'
 
 const levelColor = {
   1: '#FFFF99',
   2: '#FF6633',
 }
 
-interface State {
+interface BadTimeCalendarState {
   items: Array<string>
   levels: object
   daysItems: object
+  current: moment.Moment
 }
 
-export default class BadTimeCalendar extends React.Component<{}, State> {
+export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendarState> {
   _dateRender(current, value) {
     let items = this.state.levels[current.format('YYYY-MM-DD')]
     let color = levelColor[items] ? levelColor[items] : ''
@@ -28,11 +30,13 @@ export default class BadTimeCalendar extends React.Component<{}, State> {
   _updateDaysItems(date) {
     getDaysItems(date.format('YYYY-MM'), daysItems => {
       let levels = {}
-      for (const key of Object.keys(daysItems)) {
-        let items = daysItems[key]
+      for (const day of Object.keys(daysItems)) {
+        let items = daysItems[day]
         let level = 0
-        items.forEach(item => { if (item['state'] === 'damn') { level += 1 } })
-        levels[key] = level
+        for (const itemKey of Object.keys(items)) {
+          if (items[itemKey]) { level += 1 }
+        }
+        levels[day] = level
       }
       this.setState({ 'daysItems': daysItems, 'levels': levels })
     })
@@ -40,6 +44,12 @@ export default class BadTimeCalendar extends React.Component<{}, State> {
 
   _onChange(date) {
     this._updateDaysItems(date)
+    this.setState({ 'current': date })
+  }
+
+  _getFooter() {
+    let currentItems = this.state.daysItems[this.state.current.format('YYYY-MM-DD')]
+    return <DateState items={this.state.items} currentItems={currentItems} />
   }
 
   constructor(props: any) {
@@ -47,7 +57,8 @@ export default class BadTimeCalendar extends React.Component<{}, State> {
     this.state = {
       'items': [],
       'levels': {},
-      'daysItems': {}
+      'daysItems': {},
+      'current': moment(new Date())
     }
   }
 
@@ -55,7 +66,6 @@ export default class BadTimeCalendar extends React.Component<{}, State> {
     getItems(items => { this.setState({ 'items': items }) })
     this._updateDaysItems(moment(new Date()))
   }
-
 
   render() {
     return (
@@ -65,7 +75,7 @@ export default class BadTimeCalendar extends React.Component<{}, State> {
           onSelect={() => { console.log('select') }}
           onChange={this._onChange.bind(this)}
           dateRender={this._dateRender.bind(this)}
-          renderFooter={() => { return <div>footer</div> }}
+          renderFooter={this._getFooter.bind(this)}
           showToday={false}
         />
       </Box>
