@@ -14,15 +14,20 @@ export default class DateCell extends React.Component<DateCellProps, {}> {
     render() {
         let { date, color, currentMonth, currentDay } = this.props
         let fontColor = currentMonth ? '#000' : '#aaa'
-        color = currentDay ? color || '#d2d2d2' : color
+        let backgroudColor = currentDay ? '#e5e6e6' : ''
+        let borderStyle = color ? {
+            border: 3,
+            borderStyle: 'solid',
+            borderColor: color
+        } : {}
         return (
             <Box centerJustified>
                 < Box center centerJustified style={{
                     width: 26,
                     height: 26,
-                    backgroundColor: color,
+                    backgroundColor: backgroudColor,
                     cursor: 'pointer',
-                    border: 10
+                    ...borderStyle
                 }
                 }>
                     <div key={date.format('MMMM Do YYYY, h:mm:ss')}
