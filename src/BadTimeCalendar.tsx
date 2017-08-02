@@ -49,8 +49,13 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
   }
 
   _getFooter() {
-    let currentItems = this.state.daysItems[this.state.current.format('YYYY-MM-DD')]
-    return <DateState items={this.state.items} currentItems={currentItems} />
+    let currentItems = this.state.daysItems[this.state.current.format('YYYY-MM-DD')] || {}
+    return <DateState
+      items={this.state.items}
+      currentItems={currentItems}
+      current={this.state.current}
+      onChange={() => this._onChange(this.state.current)}
+    />
   }
 
   constructor(props: any) {
@@ -73,7 +78,6 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
       <Box style={{ width: '100%' }} centerJustified>
         <Calendar
           style={{ width: 500 }}
-          onSelect={() => { console.log('select') }}
           onChange={this._onChange.bind(this)}
           dateRender={this._dateRender.bind(this)}
           renderFooter={this._getFooter.bind(this)}
