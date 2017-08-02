@@ -7,6 +7,7 @@
     "@types/node": "^8.0.17",
     "@types/react": "^15.6.0",
     "@types/react-dom": "^15.5.1",
+    "object-path": "^0.11.4",
     "rc-calendar": "^9.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
