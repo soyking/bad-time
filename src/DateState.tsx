@@ -22,7 +22,7 @@ export default class DateState extends React.Component<Props, {}> {
             }
         })
         return (
-            <Box style={{ width: '100%', padding: '10px 10px 10px 34px' }}>
+            <Box style={{ width: '100%', padding: '10px 10px 10px 34px' }} wrap>
                 {states.map(state => {
                     return <Box flex key={state['item']}><input type='checkbox' checked={state['state']} />{state['item']}</Box>
                 })}

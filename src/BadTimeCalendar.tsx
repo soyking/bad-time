@@ -24,7 +24,8 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
     let items = this.state.levels[current.format('YYYY-MM-DD')]
     let color = levelColor[items] ? levelColor[items] : ''
     let currentMonth = current.month() === value.month()
-    return <DateCell date={current} color={color} currentMonth={currentMonth} />
+    let currentDay = current.format('YYYY-MM-DD') === value.format('YYYY-MM-DD')
+    return <DateCell date={current} color={color} currentMonth={currentMonth} currentDay={currentDay} />
   }
 
   _updateDaysItems(date) {
