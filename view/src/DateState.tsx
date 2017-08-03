@@ -51,7 +51,7 @@ export default class DateState extends React.Component<DateStateProps, {}> {
             <Box vertical style={{ padding: '0px 10px 10px 34px' }}>
                 <Box style={{ marginBottom: 10, marginLeft: 3, height: 50 }} center>
                     Month State: {todayStates.map(state => {
-                        return <Box center centerJustified style={{ marginLeft: 20 }}>
+                        return <Box center centerJustified style={{ marginLeft: 20 }} key={Math.random()}>
                             <div style={{ width: 15, height: 15, backgroundColor: state['color'] }} />
                             <div style={{ width: 20 }}>{state['level']}</div>
                         </Box>

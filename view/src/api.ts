@@ -1,8 +1,10 @@
+import xhr from 'xhr'
+
 export const levelColor = {
-  1: '#ffce3d',
-  2: '#f78e3d',
-  3: '#f04134',
-  4: '#bd2636'
+    1: '#ffce3d',
+    2: '#f78e3d',
+    3: '#f04134',
+    4: '#bd2636'
 }
 
 let daysItems = {
@@ -38,15 +40,24 @@ let daysItems = {
     }
 }
 
-export function getItems(done) {
-    let items = [
-        'coke',
-        'coffee',
-        'ice-cream',
-        'eat-after-9'
-    ]
+function getURL(path: string) {
+    return '/api' + path
+}
 
-    done(items)
+export function getItems(done) {
+    xhr.get(getURL('/items'), function (error, resp) {
+        if (error) {
+            console.error(error)
+        } else {
+            if (resp.err) {
+                console.log(resp.err)
+            } else {
+                if (resp && resp.body) {
+                    done(JSON.parse(resp.body))
+                }
+            }
+        }
+    })
 }
 
 export function getDaysItems(month, done) {
