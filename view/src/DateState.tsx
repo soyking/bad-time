@@ -2,20 +2,17 @@
 import { Box } from 'react-polymer-layout'
 import * as React from 'react'
 import { Moment } from 'moment'
-import { updateDayItems } from './api'
+import { updateDayItems, levelColor } from './api'
 
 export interface DateStateProps {
     items: Array<string>
     currentItems: object,
     current: Moment,
+    itemCount: object,
     onChange: () => void
 }
 
-export interface DateStateState {
-    currentItems: object
-}
-
-export default class DateState extends React.Component<DateStateProps, DateStateState> {
+export default class DateState extends React.Component<DateStateProps, {}> {
     static defaultProps = {
         'items': [],
         'currentItems': []
@@ -23,19 +20,11 @@ export default class DateState extends React.Component<DateStateProps, DateState
 
     _onChange(e, item) {
         let day = this.props.current.format('YYYY-MM-DD')
-        let currentItems = this.state.currentItems
+        let { currentItems } = this.props
         currentItems[item] = e.target.checked ? 1 : 0
         updateDayItems(day, currentItems, () => {
             this.props.onChange()
         })
-    }
-
-    componentDidMount() {
-        this.setState({ 'currentItems': this.props.currentItems })
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({ 'currentItems': nextProps.currentItems })
     }
 
     constructor(props: any) {
@@ -46,21 +35,36 @@ export default class DateState extends React.Component<DateStateProps, DateState
     }
 
     render() {
-        let { items } = this.props
-        let currentItems = this.state.currentItems
+        let { items, currentItems, itemCount } = this.props
         let states = items.map(item => {
             return {
                 'item': item,
                 'state': currentItems[item] ? true : false
             }
         })
+        let todayStates = Array<object>()
+        for (const level of Object.keys(itemCount)) {
+            todayStates.push({ 'level': itemCount[level], 'color': levelColor[level] })
+        }
+        let awesome = todayStates.length === 0
         return (
-            <Box style={{ width: '100%', padding: '10px 10px 10px 34px' }} wrap>
-                {states.map(state => {
-                    return <Box flex key={state['item']}>
-                        <input type='checkbox' checked={state['state']} onChange={(e) => { this._onChange.bind(this)(e, state['item']) }} />{state['item']}
-                    </Box>
-                })}
+            <Box vertical style={{ padding: '0px 10px 10px 34px' }}>
+                <Box style={{ marginBottom: 10, marginLeft: 3, height: 50 }} center>
+                    Month State: {todayStates.map(state => {
+                        return <Box center centerJustified style={{ marginLeft: 20 }}>
+                            <div style={{ width: 15, height: 15, backgroundColor: state['color'] }} />
+                            <div style={{ width: 20 }}>{state['level']}</div>
+                        </Box>
+                    })}
+                    {awesome ? <div style={{ paddingLeft: 20, fontWeight: 900 }}>AWESOME!</div> : null}
+                </Box>
+                <Box style={{ width: '100%', fontSize: 15 }} wrap>
+                    {states.map(state => {
+                        return <Box flex key={state['item']} center>
+                            <input type='checkbox' checked={state['state']} onChange={(e) => { this._onChange.bind(this)(e, state['item']) }} />{state['item']}
+                        </Box>
+                    })}
+                </Box>
             </Box>
         )
     }

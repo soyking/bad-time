@@ -3,14 +3,9 @@ import Calendar from 'rc-calendar'
 import 'rc-calendar/assets/index.css'
 import { Box } from 'react-polymer-layout'
 import DateCell from './DateCell'
-import { getDaysItems, getItems } from './api'
+import { getDaysItems, getItems, levelColor } from './api'
 import * as moment from 'moment'
 import DateState from './DateState'
-
-const levelColor = {
-  1: '#FFFF99',
-  2: '#FF6633',
-}
 
 interface BadTimeCalendarState {
   items: Array<string>
@@ -50,10 +45,23 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
 
   _getFooter() {
     let currentItems = this.state.daysItems[this.state.current.format('YYYY-MM-DD')] || {}
+    let daysItems = this.state.daysItems
+    let itemCount = {}
+    for (const day of Object.keys(daysItems)) {
+      let dayItems = daysItems[day]
+      let count = 0;
+      for (const item of Object.keys(dayItems)) {
+        if (dayItems[item]) { count += 1 }
+      }
+      if (count) {
+        itemCount[count] = itemCount[count] ? itemCount[count] + 1 : 1
+      }
+    }
     return <DateState
       items={this.state.items}
       currentItems={currentItems}
       current={this.state.current}
+      itemCount={itemCount}
       onChange={() => this._onChange(this.state.current)}
     />
   }
