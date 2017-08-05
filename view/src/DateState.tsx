@@ -42,21 +42,24 @@ export default class DateState extends React.Component<DateStateProps, {}> {
                 'state': currentItems[item] ? true : false
             }
         })
-        let todayStates = Array<object>()
-        for (const level of Object.keys(itemCount)) {
-            todayStates.push({ 'level': itemCount[level], 'color': levelColor[level] })
+
+        let monthStates = Array<object>()
+        for (const level of Object.keys(levelColor)) {
+            monthStates.push({ 'count': itemCount[level] || 0, 'color': levelColor[level] })
         }
-        let awesome = todayStates.length === 0
+        let awesome = monthStates.every((state) => { return state['count'] === 0 })
+        let monthStatesComponent = awesome ? <div style={{ paddingLeft: 20, fontWeight: 900 }}>AWESOME!</div> :
+            monthStates.map(state => {
+                return <Box center centerJustified style={{ marginLeft: 20 }} key={Math.random()}>
+                    <div style={{ width: 15, height: 15, backgroundColor: state['color'] }} />
+                    <div style={{ width: 20 }}>{state['count']}</div>
+                </Box>
+            })
+
         return (
             <Box vertical style={{ padding: '0px 10px 10px 34px', fontSize: 15 }}>
                 <Box style={{ marginBottom: 10, marginLeft: 3, height: 50 }} center>
-                    Month State: {todayStates.map(state => {
-                        return <Box center centerJustified style={{ marginLeft: 20 }} key={Math.random()}>
-                            <div style={{ width: 15, height: 15, backgroundColor: state['color'] }} />
-                            <div style={{ width: 20 }}>{state['level']}</div>
-                        </Box>
-                    })}
-                    {awesome ? <div style={{ paddingLeft: 20, fontWeight: 900 }}>AWESOME!</div> : null}
+                    Month States:{monthStatesComponent}
                 </Box>
                 <Box style={{ width: '100%' }} wrap>
                     {states.map(state => {
