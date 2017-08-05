@@ -7,64 +7,44 @@ export const levelColor = {
     4: '#bd2636'
 }
 
-let daysItems = {
-    '2017-08-13': {
-        'coke': 0,
-        'coffee': 0,
-        'ice-cream': 0,
-        'eat-after-9': 0
-    },
-    '2017-08-15': {
-        'coke': 1,
-        'coffee': 0,
-        'ice-cream': 0,
-        'eat-after-9': 0
-    },
-    '2017-08-17': {
-        'coke': 1,
-        'coffee': 1,
-        'ice-cream': 0,
-        'eat-after-9': 0
-    },
-    '2017-08-19': {
-        'coke': 1,
-        'coffee': 1,
-        'ice-cream': 1,
-        'eat-after-9': 0
-    },
-    '2017-08-21': {
-        'coke': 1,
-        'coffee': 1,
-        'ice-cream': 1,
-        'eat-after-9': 1
-    }
-}
-
 function getURL(path: string) {
     return '/api' + path
 }
 
-export function getItems(done) {
-    xhr.get(getURL('/items'), function (error, resp) {
+function xhrGet(path, callback) {
+    xhr.get(getURL(path), (error, resp) => {
         if (error) {
             console.error(error)
         } else {
-            if (resp.err) {
-                console.log(resp.err)
-            } else {
-                if (resp && resp.body) {
-                    done(JSON.parse(resp.body))
-                }
+            if (resp && resp.body) {
+                callback(JSON.parse(resp.body))
             }
         }
     })
 }
 
-export function getDaysItems(month, done) {
-    done(daysItems)
+export function getItems(callback) {
+    xhrGet('/items', callback)
 }
 
-export function updateDayItems(day, items, done) {
-    daysItems[day] = items
-    done()
+export function getDaysItems(month, callback) {
+    xhrGet('/day/items?month=' + month, callback)
+}
+
+export function updateDayItems(day, items, callback) {
+    xhr.post(getURL('/day/items'), {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            day: day,
+            items: items
+        })
+    }, (error, resp) => {
+        if (error) {
+            console.error(error)
+        } else {
+            callback()
+        }
+    })
 }

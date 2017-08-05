@@ -48,7 +48,7 @@ export default class DateState extends React.Component<DateStateProps, {}> {
         }
         let awesome = todayStates.length === 0
         return (
-            <Box vertical style={{ padding: '0px 10px 10px 34px' }}>
+            <Box vertical style={{ padding: '0px 10px 10px 34px', fontSize: 15 }}>
                 <Box style={{ marginBottom: 10, marginLeft: 3, height: 50 }} center>
                     Month State: {todayStates.map(state => {
                         return <Box center centerJustified style={{ marginLeft: 20 }} key={Math.random()}>
@@ -58,7 +58,7 @@ export default class DateState extends React.Component<DateStateProps, {}> {
                     })}
                     {awesome ? <div style={{ paddingLeft: 20, fontWeight: 900 }}>AWESOME!</div> : null}
                 </Box>
-                <Box style={{ width: '100%', fontSize: 15 }} wrap>
+                <Box style={{ width: '100%' }} wrap>
                     {states.map(state => {
                         return <Box flex key={state['item']} center>
                             <input type='checkbox' checked={state['state']} onChange={(e) => { this._onChange.bind(this)(e, state['item']) }} />{state['item']}
