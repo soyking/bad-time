@@ -68,6 +68,6 @@ app.post('/api/day/items', function (req, res) {
 })
 
 app.listen(3001, function () {
-  console.log('Example app listening on port 3001!')
+  console.log('Bad Time is Running')
 })
 
