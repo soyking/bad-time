@@ -9,6 +9,7 @@ export interface DateStateProps {
     currentItems: object,
     current: Moment,
     itemCount: object,
+    itemStat: object
     onChange: () => void
 }
 
@@ -35,7 +36,7 @@ export default class DateState extends React.Component<DateStateProps, {}> {
     }
 
     render() {
-        let { items, currentItems, itemCount } = this.props
+        let { items, currentItems, itemCount, itemStat } = this.props
         let states = items.map(item => {
             return {
                 'item': item,
@@ -55,12 +56,36 @@ export default class DateState extends React.Component<DateStateProps, {}> {
                     <div style={{ width: 20 }}>{state['count']}</div>
                 </Box>
             })
+        let monthItemComponent = awesome ? <div style={{ fontWeight: 900 }}>AWESOME!</div> :
+            Object.keys(itemStat).map(function (key, index) {
+                return <Box style={{ width: '100%' }} key={key}>
+                    <Box key={key} style={{ width: 167 }}>
+                        {key}
+                    </Box>
+                    <Box style={{ width: 50 }}>
+                        {itemStat[key]}
+                    </Box>
+                </Box>
+            })
+
 
         return (
             <Box vertical style={{ padding: '0px 10px 10px 34px', fontSize: 15 }}>
-                <Box style={{ marginBottom: 10, marginLeft: 3, height: 50 }} center>
-                    Month States:{monthStatesComponent}
+                <Box style={{ marginBottom: 10, marginLeft: 3 }} vertical>
+                    <Box style={{ height: 50 }} center>
+                        <div style={{ width: 100 }}>Month States:</div>
+                        {monthStatesComponent}
+                    </Box>
+                    <Box>
+                        <div style={{ width: 100 }}>Items States:</div>
+                        <Box style={{ paddingLeft: 21 }} vertical start flex>
+                            {monthItemComponent}
+                        </Box>
+                    </Box>
                 </Box>
+                <div style={{ paddingTop: 20, paddingBottom: 20 }}>
+                    <div style={{ width: '100%', height: 1, background: '#E0E0E0' }}></div>
+                </div>
                 <Box style={{ width: '100%' }} wrap>
                     {states.map(state => {
                         return <Box flex key={state['item']} center>
@@ -68,7 +93,7 @@ export default class DateState extends React.Component<DateStateProps, {}> {
                         </Box>
                     })}
                 </Box>
-            </Box>
+            </Box >
         )
     }
 }

@@ -23,23 +23,25 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
     return <DateCell date={current} color={color} currentMonth={currentMonth} currentDay={currentDay} />
   }
 
-  _updateDaysItems(date) {
-    getDaysItems(date.format('YYYY-MM'), daysItems => {
-      let levels = {}
-      for (const day of Object.keys(daysItems)) {
-        let items = daysItems[day]
-        let level = 0
-        for (const itemKey of Object.keys(items)) {
-          if (items[itemKey]) { level += 1 }
+  _updateDaysItems(date, force=false) {
+    if (force || !Object.keys(this.state.daysItems).length || date.format('YYYY-MM') !== this.state.current.format('YYYY-MM')) {
+      getDaysItems(date.format('YYYY-MM'), daysItems => {
+        let levels = {}
+        for (const day of Object.keys(daysItems)) {
+          let items = daysItems[day]
+          let level = 0
+          for (const itemKey of Object.keys(items)) {
+            if (items[itemKey]) { level += 1 }
+          }
+          levels[day] = level
         }
-        levels[day] = level
-      }
-      this.setState({ 'daysItems': daysItems, 'levels': levels })
-    })
+        this.setState({ 'daysItems': daysItems, 'levels': levels })
+      })
+    }
   }
 
-  _onChange(date) {
-    this._updateDaysItems(date)
+  _onChange(date, force=false) {
+    this._updateDaysItems(date, force)
     this.setState({ 'current': date })
   }
 
@@ -47,11 +49,15 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
     let currentItems = this.state.daysItems[this.state.current.format('YYYY-MM-DD')] || {}
     let daysItems = this.state.daysItems
     let itemCount = {}
+    let itemStat = {}
     for (const day of Object.keys(daysItems)) {
       let dayItems = daysItems[day]
       let count = 0;
       for (const item of Object.keys(dayItems)) {
-        if (dayItems[item]) { count += 1 }
+        if (dayItems[item]) {
+          count += 1
+          itemStat[item] = itemStat[item] ? itemStat[item] + 1 : 1
+        }
       }
       if (count) {
         itemCount[count] = itemCount[count] ? itemCount[count] + 1 : 1
@@ -62,7 +68,8 @@ export default class BadTimeCalendar extends React.Component<{}, BadTimeCalendar
       currentItems={currentItems}
       current={this.state.current}
       itemCount={itemCount}
-      onChange={() => this._onChange(this.state.current)}
+      itemStat={itemStat}
+      onChange={() => this._onChange(this.state.current, true)}
     />
   }
 
